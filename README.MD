@@ -10,7 +10,7 @@
 
 ![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/public.png)
 
-![](https:https://github.com/yuriiuchi/MMAEY/blob/master/screenshots/projeto.png)
+![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/projeto.png)
 
 # Installing globally:
 
