@@ -2,6 +2,7 @@ package com.totvs.tj.tcc.domain.conta;
 
 import org.javamoney.moneta.Money;
 
+import br.com.caelum.stella.validation.CNPJValidator;
 import lombok.Builder;
 import lombok.ToString;
 
@@ -14,6 +15,10 @@ public class Empresa {
     private Money valorDeMercado;
     private ResponsavelId responsavel;
     
+    public void validarCNPJ(String cnpj) {
+       CNPJValidator cnpjValidator = new CNPJValidator();
+       cnpjValidator.assertValid(cnpj);
+    }
     public int getQuantidadeFuncionarios() {
         return quantidadeFuncionarios;
     }
