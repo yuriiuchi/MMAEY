@@ -4,6 +4,7 @@ import static com.totvs.tj.tcc.domain.conta.Conta.Situacao.ABERTO;
 import static com.totvs.tj.tcc.domain.conta.Conta.Situacao.SUSPENSO;
 import static lombok.AccessLevel.PRIVATE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.javamoney.moneta.Money;
@@ -37,6 +38,7 @@ public class Conta {
         this.empresa = empresa;
         this.id = id;
         this.limite = this.calcularLimite();
+        this.extratoConta = new ArrayList<ExtratoConta>();
     }
     
     public static Conta from(ContaId id,Empresa empresa) {
@@ -53,10 +55,12 @@ public class Conta {
     
     public void debitarSaldo(Money valor) {
         this.saldo = this.saldo.subtract(valor);
+        this.extratoConta.add(ExtratoConta.from(valor.negate()));
     }
     
     public void creditarSaldo(Money valor) {
         this.saldo = this.saldo.add(valor);
+        this.extratoConta.add(ExtratoConta.from(valor));
     }
     
     public void aumentarLimte(Money valor) {

@@ -1,8 +1,12 @@
 package com.totvs.tj.tcc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.javamoney.moneta.Money;
 import org.junit.Test;
@@ -14,6 +18,7 @@ import com.totvs.tj.tcc.domain.conta.ContaId;
 import com.totvs.tj.tcc.domain.conta.ContaRepository;
 import com.totvs.tj.tcc.domain.conta.Empresa;
 import com.totvs.tj.tcc.domain.conta.EmpresaId;
+import com.totvs.tj.tcc.domain.conta.ExtratoConta;
 import com.totvs.tj.tcc.domain.conta.ResponsavelId;
 
 public class ContaTest {
@@ -24,19 +29,27 @@ public class ContaTest {
 
     private final ResponsavelId idResponsavel = ResponsavelId.generate();
   
+    private Empresa empresa;
+    
+    public Empresa getEmpresa() {
+            return this.empresa = Empresa.builder()
+                    .id(idEmpresa)
+                    .CPNJ("11111111111")
+                    .valorDeMercado(Money.of(50000.00, "BRL"))
+                    .quantidadeFuncionarios(10)
+                    .build();
+    }
+    public Conta getConta() {
+        return Conta.from(idConta,empresa);
+    }
     
     @Test
     public void aoCriarUmaConta() throws Exception {
 
         // WHEN
-        Empresa empresa = Empresa.builder()
-                .id(idEmpresa)
-                .CPNJ("11111111111")
-                .valorDeMercado(Money.of(50000.00, "BRL"))
-                .quantidadeFuncionarios(10)
-                .build();
+        Empresa empresa = this.getEmpresa();
         
-        Conta conta = Conta.from(idConta,empresa);
+        Conta conta = getConta();
         
         // THEN
         assertNotNull(conta);
@@ -61,12 +74,7 @@ public class ContaTest {
         ContaRepository repository = new ContaRepositoryMock();
         ContaApplicationService service = new ContaApplicationService(repository);
         
-        Empresa empresa = Empresa.builder()
-                .id(idEmpresa)
-                .CPNJ("11111111111")
-                .valorDeMercado(Money.of(50000.00, "BRL"))
-                .quantidadeFuncionarios(10)
-                .build();
+        Empresa empresa = this.getEmpresa();
         
         AbrirContaCommand cmd = AbrirContaCommand.builder()
                 .empresa(empresa)
@@ -86,14 +94,9 @@ public class ContaTest {
         ContaRepository repository = new ContaRepositoryMock();
         ContaApplicationService service = new ContaApplicationService(repository);
         
-        Empresa empresa = Empresa.builder()
-                .id(idEmpresa)
-                .CPNJ("11111111111")
-                .valorDeMercado(Money.of(50000.00, "BRL"))
-                .quantidadeFuncionarios(10)
-                .build();
+        Empresa empresa = this.getEmpresa();
         
-        Conta conta = Conta.from(idConta,empresa);
+        Conta conta = getConta();
         
         // WHEN
         conta.aumentarLimte(Money.of(100.00, "BRL"));
@@ -102,6 +105,53 @@ public class ContaTest {
         assertTrue(conta.getLimite().isEqualTo(Money.of(150, "BRL")));
     }
     
+    @Test
+    public void aoSuspenderConta() throws Exception {
+        
+        // WHEN
+        Empresa empresa = this.getEmpresa();
+        Conta conta = getConta();
+        
+        // THEN
+        assertNotNull(conta);
+        conta.suspender();
+        assertFalse(conta.isDisponivel());
+    }
+    
+    @Test
+    public void aoCreditarSaldo() throws Exception {
+        
+        List<ExtratoConta> extratoConta = new ArrayList<ExtratoConta>();
+        
+        // WHEN
+        Empresa empresa = this.getEmpresa();
+        Conta conta = getConta();
+        
+        // THEN
+        extratoConta.add(ExtratoConta.from(Money.of(150, "BRL")));
+        assertNotNull(conta);
+        conta.creditarSaldo(Money.of(150, "BRL"));
+        assertEquals(conta.getSaldo(),Money.of(150, "BRL")); 
+        assertEquals(extratoConta.get(0).toString(), conta.getExtrato().get(0).toString());
+   }
+    
+    @Test
+    public void aoDebitarSaldo() throws Exception {
+        
+        List<ExtratoConta> extratoConta = new ArrayList<ExtratoConta>();
+        
+        // WHEN
+        Empresa empresa = this.getEmpresa();
+        Conta conta = getConta();
+        
+        // THEN
+        extratoConta.add(ExtratoConta.from(Money.of(-200, "BRL")));
+        assertNotNull(conta);
+        conta.debitarSaldo(Money.of(200, "BRL"));
+        assertEquals(conta.getSaldo(),Money.of(-200, "BRL")); 
+        assertEquals(extratoConta.get(0).toString(), conta.getExtrato().get(0).toString());
+   }
+
     static class ContaRepositoryMock implements ContaRepository {
         @Override
         public void save(Conta conta) {
