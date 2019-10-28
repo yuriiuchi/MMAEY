@@ -99,10 +99,12 @@ public class ContaTest {
         Conta conta = getConta();
         
         // WHEN
-        conta.aumentarLimte(Money.of(100.00, "BRL"));
+        conta.aumentarLimte();
         
         // THEN
-        assertTrue(conta.getLimite().isEqualTo(Money.of(150, "BRL")));
+        assertEquals(conta.getLimite(),(Money.of(75, "BRL")));
+        conta.aumentarLimte();
+        assertEquals(conta.getLimite(),(Money.of(75, "BRL")));
     }
     
     @Test

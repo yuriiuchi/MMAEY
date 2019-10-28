@@ -39,6 +39,7 @@ public class Conta {
         this.id = id;
         this.limite = this.calcularLimite();
         this.extratoConta = new ArrayList<ExtratoConta>();
+        this.alteracaoLimite = new ArrayList<AlteracaoLimite>();
     }
     
     public static Conta from(ContaId id,Empresa empresa) {
@@ -63,8 +64,15 @@ public class Conta {
         this.extratoConta.add(ExtratoConta.from(valor));
     }
     
-    public void aumentarLimte(Money valor) {
-        this.limite = this.limite.add(valor);
+    public void aumentarLimte() {
+        if (this.aumentoDeLimiteDisponivel()) {
+            this.limite = this.limite.add(this.limite.multiply(0.50));
+            this.alteracaoLimite.add(AlteracaoLimite.from(this.limite));
+        }
+    }
+    
+    public boolean aumentoDeLimiteDisponivel() {
+        return this.alteracaoLimite.isEmpty();
     }
     
     public Money getLimite() {
