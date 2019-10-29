@@ -10,11 +10,13 @@ import java.util.List;
 import org.javamoney.moneta.Money;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
+@Builder
 @AllArgsConstructor(access = PRIVATE)
 public class Conta {
 
@@ -99,5 +101,64 @@ public class Conta {
         ABERTO, SUSPENSO;
 
     }
+    
+    public static Conta empty() {
+		//return new Conta(null, null, Money.of(0, "BRL"), Money.of(0, "BRL"));
+    	return null;
+	}
+    
+    private boolean excedeuLimit(MovimentacaoFinanceira movimentacaoFinanceira) {
+		if (movimentacaoFinanceira.getValor()
+				.isGreaterThan(this.getSaldo()
+				.add(this.getLimite()))) {
+			
+			movimentacaoFinanceira.recusar();
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean excedeuLimitSemAprovacao(MovimentacaoFinanceira movimentacaoFinanceira) {
+		
+		if ((movimentacaoFinanceira.getValor()
+				.subtract(this.saldo).isGreaterThan(this.getLimite().multiply(0.25)))){
+		
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean debitarSaldo(MovimentacaoFinanceira movimentacaoFinanceira) {
+		
+		//if (conta.getSituacao().equals(Situacao.suspensa)) {
+		
+		if (!movimentacaoFinanceira.getStatus().equals(StatusMovimentacaoFinanceira.finalizada)){
+			return false;
+		}
+		
+		if (excedeuLimit(movimentacaoFinanceira)) {
+			return false;
+		}
+		
+		if (!movimentacaoFinanceira.getStatus().equals(StatusMovimentacaoFinanceira.aprovada)){
+			if (excedeuLimitSemAprovacao(movimentacaoFinanceira)){
+				return false;
+			}
+		}
+		
+		this.saldo = this.saldo.subtract(movimentacaoFinanceira.getValor());
+		movimentacaoFinanceira.finalizar();
+		return true;
+	}
+	
+	public boolean creditarSaldo(MovimentacaoFinanceira movimentacaoFinanceira) {
+		
+		if (this.creditarSaldo(movimentacaoFinanceira)) {
+				return false;
+		}
+		this.saldo = this.saldo.add(movimentacaoFinanceira.getValor());
+		movimentacaoFinanceira.finalizar();
+		return true;
+	}
     
 }
