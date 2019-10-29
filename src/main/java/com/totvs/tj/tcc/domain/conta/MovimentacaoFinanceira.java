@@ -14,8 +14,8 @@ import lombok.ToString;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MovimentacaoFinanceira {
     private MovimentacaoFinanceiraId id;
-    private ContaId contaCredito;
-    private ContaId contaDebito;
+    private Conta contaCredito;
+    private Conta contaDebito;
     private Money valor;
     private GerenteId gerente;
     @Builder.Default
@@ -42,6 +42,46 @@ public class MovimentacaoFinanceira {
 
     public void finalizar() {
         this.status = StatusMovimentacaoFinanceira.finalizada;
+    }
+    
+    public MovimentacaoFinanceira(Money valor, TipoMovimentacaoFinanceira tipo, Conta contaCredito, Conta contaDebito) {
+		this.contaCredito = contaCredito;
+		this.contaDebito = contaDebito;
+		this.valor = valor;
+		this.tipo = tipo;
+		this.status = StatusMovimentacaoFinanceira.aguardandoAprovacao;   
+	}
+	
+    public static MovimentacaoFinanceira saque(Money valor, Conta conta) {    	    	
+    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(valor, 
+    			TipoMovimentacaoFinanceira.saque, Conta.empty(), conta);
+   	
+    	return movimentacaoFinaceira;
+    }
+    
+    public static MovimentacaoFinanceira deposito(Money valor, Conta conta) {    	
+    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(valor, 
+    			TipoMovimentacaoFinanceira.deposito, conta, Conta.empty());
+      	
+    	return movimentacaoFinaceira;
+    }
+    
+    public static MovimentacaoFinanceira transferencia(Money valor, Conta contaDebito, Conta contaCredito) {
+    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(valor, 
+    			TipoMovimentacaoFinanceira.deposito, contaCredito, contaDebito);
+    	
+    	return movimentacaoFinaceira;
+    }
+    
+    public void realizar() {
+    	
+    	if (this.contaDebito.debitarSaldo(this)){
+    		this.status =  StatusMovimentacaoFinanceira.finalizada;
+    	
+    	
+    		this.contaCredito.creditarSaldo(this);
+    	}
+    	
     }
 
 }
