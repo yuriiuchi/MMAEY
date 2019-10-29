@@ -12,5 +12,7 @@
 
 # Diagrama:
 ![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/projeto.png)
+![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/Diagrama.JPG)
 
-
+# Anotações:
+![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/Anotacoes.JPG)
