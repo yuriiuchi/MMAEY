@@ -44,6 +44,13 @@ public class Conta {
         this.alteracaoLimite = new ArrayList<AlteracaoLimite>();
     }
     
+    private Conta(ContaId id){
+        this.saldo = Money.of(0, "BRL");
+       
+    }
+    
+    
+    
     public static Conta from(ContaId id,Empresa empresa) {
         return new Conta(id,empresa);
     }
