@@ -2,22 +2,17 @@ package com.totvs.tj.tcc.domain.conta;
 
 import static com.totvs.tj.tcc.domain.conta.Conta.Situacao.ABERTO;
 import static com.totvs.tj.tcc.domain.conta.Conta.Situacao.SUSPENSO;
-import static lombok.AccessLevel.PRIVATE;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.javamoney.moneta.Money;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
-@Builder
-@AllArgsConstructor(access = PRIVATE)
 public class Conta {
 
     private ContaId id;
@@ -54,17 +49,7 @@ public class Conta {
 
     public boolean isDisponivel() {
         return ABERTO.equals(situacao);
-    }
-    
-    public void debitarSaldo(Money valor) {
-        this.saldo = this.saldo.subtract(valor);
-        this.extratoConta.add(ExtratoConta.from(valor.negate()));
-    }
-    
-    public void creditarSaldo(Money valor) {
-        this.saldo = this.saldo.add(valor);
-        this.extratoConta.add(ExtratoConta.from(valor));
-    }
+    }      
     
     public void aumentarLimte() {
         if (this.aumentoDeLimiteDisponivel()) {
@@ -122,7 +107,7 @@ public class Conta {
 		
 		if ((movimentacaoFinanceira.getValor()
 				.subtract(this.saldo).isGreaterThan(this.getLimite().multiply(0.25)))){
-		
+		    movimentacaoFinanceira.aguardarAprovacao();
 			return true;
 		}
 		return false;
@@ -130,9 +115,12 @@ public class Conta {
 	
 	public boolean debitarSaldo(MovimentacaoFinanceira movimentacaoFinanceira) {
 		
-		//if (conta.getSituacao().equals(Situacao.suspensa)) {
-		
-		if (!movimentacaoFinanceira.getStatus().equals(StatusMovimentacaoFinanceira.finalizada)){
+		if (this.getSituacao().equals(SUSPENSO)) {
+		    movimentacaoFinanceira.recusar();
+		    return false;
+        }		
+				
+		if (movimentacaoFinanceira.getStatus().equals(StatusMovimentacaoFinanceira.finalizada)){
 			return false;
 		}
 		
@@ -146,18 +134,22 @@ public class Conta {
 			}
 		}
 		
-		this.saldo = this.saldo.subtract(movimentacaoFinanceira.getValor());
+		this.saldo = this.saldo.subtract(movimentacaoFinanceira.getValor());		
+		this.extratoConta.add(ExtratoConta.from(movimentacaoFinanceira.getValor().negate()));
 		movimentacaoFinanceira.finalizar();
 		return true;
 	}
 	
 	public boolean creditarSaldo(MovimentacaoFinanceira movimentacaoFinanceira) {
 		
-		if (this.creditarSaldo(movimentacaoFinanceira)) {
-				return false;
-		}
+	    if (this.getSituacao().equals(SUSPENSO)) {
+	        movimentacaoFinanceira.recusar();
+            return false;
+        }       
+	    
 		this.saldo = this.saldo.add(movimentacaoFinanceira.getValor());
 		movimentacaoFinanceira.finalizar();
+		this.extratoConta.add(ExtratoConta.from(movimentacaoFinanceira.getValor()));
 		return true;
 	}
     

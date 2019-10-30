@@ -5,9 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.javamoney.moneta.Money;
 import org.junit.Test;
 
@@ -18,7 +15,6 @@ import com.totvs.tj.tcc.domain.conta.ContaId;
 import com.totvs.tj.tcc.domain.conta.ContaRepository;
 import com.totvs.tj.tcc.domain.conta.Empresa;
 import com.totvs.tj.tcc.domain.conta.EmpresaId;
-import com.totvs.tj.tcc.domain.conta.ExtratoConta;
 import com.totvs.tj.tcc.domain.conta.ResponsavelId;
 
 public class ContaTest {
@@ -118,42 +114,8 @@ public class ContaTest {
         assertNotNull(conta);
         conta.suspender();
         assertFalse(conta.isDisponivel());
-    }
+    }    
     
-    @Test
-    public void aoCreditarSaldo() throws Exception {
-        
-        List<ExtratoConta> extratoConta = new ArrayList<ExtratoConta>();
-        
-        // WHEN
-        Empresa empresa = this.getEmpresa();
-        Conta conta = getConta();
-        
-        // THEN
-        extratoConta.add(ExtratoConta.from(Money.of(150, "BRL")));
-        assertNotNull(conta);
-        conta.creditarSaldo(Money.of(150, "BRL"));
-        assertEquals(conta.getSaldo(),Money.of(150, "BRL")); 
-        assertEquals(extratoConta.get(0).toString(), conta.getExtrato().get(0).toString());
-   }
-    
-    @Test
-    public void aoDebitarSaldo() throws Exception {
-        
-        List<ExtratoConta> extratoConta = new ArrayList<ExtratoConta>();
-        
-        // WHEN
-        Empresa empresa = this.getEmpresa();
-        Conta conta = getConta();
-        
-        // THEN
-        extratoConta.add(ExtratoConta.from(Money.of(-200, "BRL")));
-        assertNotNull(conta);
-        conta.debitarSaldo(Money.of(200, "BRL"));
-        assertEquals(conta.getSaldo(),Money.of(-200, "BRL")); 
-        assertEquals(extratoConta.get(0).toString(), conta.getExtrato().get(0).toString());
-   }
-
     static class ContaRepositoryMock implements ContaRepository {
         @Override
         public void save(Conta conta) {

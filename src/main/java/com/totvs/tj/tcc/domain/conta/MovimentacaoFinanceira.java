@@ -2,24 +2,18 @@ package com.totvs.tj.tcc.domain.conta;
 
 import org.javamoney.moneta.Money;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MovimentacaoFinanceira {
     private MovimentacaoFinanceiraId id;
     private Conta contaCredito;
     private Conta contaDebito;
     private Money valor;
     private GerenteId gerente;
-    @Builder.Default
-    private StatusMovimentacaoFinanceira status = StatusMovimentacaoFinanceira.iniciada;
+    private StatusMovimentacaoFinanceira status;
     private TipoMovimentacaoFinanceira tipo;
 
     public void Aprovar(GerenteId gerente) {
@@ -44,44 +38,49 @@ public class MovimentacaoFinanceira {
         this.status = StatusMovimentacaoFinanceira.finalizada;
     }
     
-    public MovimentacaoFinanceira(Money valor, TipoMovimentacaoFinanceira tipo, Conta contaCredito, Conta contaDebito) {
-		this.contaCredito = contaCredito;
+    public MovimentacaoFinanceira(MovimentacaoFinanceiraId id, Money valor, TipoMovimentacaoFinanceira tipo, Conta contaCredito, Conta contaDebito) {
+		this.id = id;
+        this.contaCredito = contaCredito;
 		this.contaDebito = contaDebito;
 		this.valor = valor;
 		this.tipo = tipo;
 		this.status = StatusMovimentacaoFinanceira.aguardandoAprovacao;   
 	}
 	
-    public static MovimentacaoFinanceira saque(Money valor, Conta conta) {    	    	
-    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(valor, 
+    public static MovimentacaoFinanceira saque(MovimentacaoFinanceiraId id, Money valor, Conta conta) {    	    	
+    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(id, valor, 
     			TipoMovimentacaoFinanceira.saque, Conta.empty(), conta);
    	
     	return movimentacaoFinaceira;
     }
     
-    public static MovimentacaoFinanceira deposito(Money valor, Conta conta) {    	
-    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(valor, 
+    public static MovimentacaoFinanceira deposito(MovimentacaoFinanceiraId id, Money valor, Conta conta) {    	
+    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(id,valor, 
     			TipoMovimentacaoFinanceira.deposito, conta, Conta.empty());
       	
     	return movimentacaoFinaceira;
     }
     
-    public static MovimentacaoFinanceira transferencia(Money valor, Conta contaDebito, Conta contaCredito) {
-    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(valor, 
-    			TipoMovimentacaoFinanceira.deposito, contaCredito, contaDebito);
+    public static MovimentacaoFinanceira transferencia(MovimentacaoFinanceiraId id, Money valor, Conta contaDebito, Conta contaCredito) {
+    	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(id,valor, 
+    			TipoMovimentacaoFinanceira.transferencia, contaCredito, contaDebito);
     	
     	return movimentacaoFinaceira;
     }
     
     public void realizar() {
-    	
-    	if (this.contaDebito.debitarSaldo(this)){
-    		this.status =  StatusMovimentacaoFinanceira.finalizada;
-    	
-    	
-    		this.contaCredito.creditarSaldo(this);
+    	if (this.tipo.equals(TipoMovimentacaoFinanceira.deposito)) {
+    	    this.contaCredito.creditarSaldo(this);
     	}
     	
+    	if (this.tipo.equals(TipoMovimentacaoFinanceira.saque)) {
+            this.contaDebito.debitarSaldo(this);
+        }
+    	
+    	if (this.tipo.equals(TipoMovimentacaoFinanceira.transferencia)) {
+            if (this.contaDebito.debitarSaldo(this)){
+                this.contaCredito.creditarSaldo(this);
+            }
+        }    	
     }
-
 }
