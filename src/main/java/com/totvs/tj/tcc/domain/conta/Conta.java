@@ -17,8 +17,6 @@ public class Conta {
 
     private ContaId id;
     
-    private Empresa empresa;
-    
     private Situacao situacao;
     
     private Money saldo;
@@ -32,9 +30,8 @@ public class Conta {
     private Conta(ContaId id,Empresa empresa){
         this.saldo = Money.of(0, "BRL");
         this.situacao = ABERTO;
-        this.empresa = empresa;
         this.id = id;
-        this.limite = this.calcularLimite();
+        this.limite = this.calcularLimite(empresa);
         this.extratoConta = new ArrayList<ExtratoConta>();
         this.alteracaoLimite = new ArrayList<AlteracaoLimite>();
     }
@@ -74,8 +71,8 @@ public class Conta {
         return this.alteracaoLimite;
     }
     
-    public Money calcularLimite() {
-        return (((this.empresa.getValorDeMercado().divide(this.empresa.getQuantidadeFuncionarios()))
+    private Money calcularLimite(Empresa empresa) {
+        return (((empresa.getValorDeMercado().divide(empresa.getQuantidadeFuncionarios()))
                 .divide(15000))
                 .divide(100))
                 .multiply(15000);
@@ -88,8 +85,7 @@ public class Conta {
     }
     
     public static Conta empty() {
-		//return new Conta(null, null, Money.of(0, "BRL"), Money.of(0, "BRL"));
-    	return null;
+		return new Conta(null, Empresa.empty());
 	}
     
     private boolean excedeuLimit(MovimentacaoFinanceira movimentacaoFinanceira) {

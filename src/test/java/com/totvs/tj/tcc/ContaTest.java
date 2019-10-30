@@ -35,31 +35,22 @@ public class ContaTest {
                     .quantidadeFuncionarios(10)
                     .build();
     }
+    
     public Conta getConta() {
         return Conta.from(idConta,empresa);
     }
     
     @Test
     public void aoCriarUmaConta() throws Exception {
-
         // WHEN
         Empresa empresa = this.getEmpresa();
-        
         Conta conta = getConta();
-        
         // THEN
         assertNotNull(conta);
-
         assertEquals(idConta, conta.getId());
-        assertEquals(empresa, conta.getEmpresa());
-
-        assertEquals(idConta.toString(), conta.getId().toString());
-        assertEquals(empresa.toString(), conta.getEmpresa().toString());
-        
-        assertTrue(conta.isDisponivel());
-        
+        assertEquals(idConta.toString(), conta.getId().toString());        
+        assertTrue(conta.isDisponivel());        
         assertTrue(conta.getLimite().isLessThanOrEqualTo(Money.of(15000, "BRL")));
-        
         assertTrue(conta.getSaldo().isEqualTo(Money.of(0, "BRL")));
     }
 

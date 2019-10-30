@@ -98,14 +98,14 @@ public class MovimentacaoFinanceiraTest {
         movimentacao.aguardarAprovacao();
         assertEquals(movimentacao.getStatus(),StatusMovimentacaoFinanceira.aguardandoAprovacao);
         
-        movimentacao.Reprovar(idGerente);
+        movimentacao.reprovar(idGerente);
         assertEquals(movimentacao.getStatus(),StatusMovimentacaoFinanceira.recusada);
         assertEquals(idGerente.toString(), movimentacao.getGerente().toString());
         
         movimentacao.recusar();
         assertEquals(movimentacao.getStatus(),StatusMovimentacaoFinanceira.recusada);
         
-        movimentacao.Aprovar(idGerente);
+        movimentacao.aprovar(idGerente);
         assertEquals(movimentacao.getStatus(),StatusMovimentacaoFinanceira.aprovada);
         assertEquals(idGerente.toString(), movimentacao.getGerente().toString());
         
@@ -263,7 +263,7 @@ public class MovimentacaoFinanceiraTest {
         movimentacao.realizar();
         assertEquals(StatusMovimentacaoFinanceira.aguardandoAprovacao, movimentacao.getStatus());
         
-        movimentacao.Aprovar(idGerente);
+        movimentacao.aprovar(idGerente);
         movimentacao.realizar();
         
         assertEquals(contaDebito.getSaldo(), Money.of(250.01,"BRL").negate());

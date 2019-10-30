@@ -15,6 +15,8 @@ public class Empresa {
     private Money valorDeMercado;
     private ResponsavelId responsavel;
     
+    private ContaId contaId;
+    
     public void validarCNPJ(String cnpj) {
        CNPJValidator cnpjValidator = new CNPJValidator();
        cnpjValidator.assertValid(cnpj);
@@ -24,6 +26,15 @@ public class Empresa {
     }
     public Money getValorDeMercado() {
         return valorDeMercado;
+    }
+    
+    public static Empresa empty() {
+    	return Empresa.builder()
+                .id(null)
+                .CPNJ("")
+                .valorDeMercado(Money.of(0, "BRL"))
+                .quantidadeFuncionarios(-1)
+                .build();
     }
        
 }

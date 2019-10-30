@@ -16,12 +16,12 @@ public class MovimentacaoFinanceira {
     private StatusMovimentacaoFinanceira status;
     private TipoMovimentacaoFinanceira tipo;
 
-    public void Aprovar(GerenteId gerente) {
+    public void aprovar(GerenteId gerente) {
         this.status = StatusMovimentacaoFinanceira.aprovada;
         this.gerente = gerente;
     }
 
-    public void Reprovar(GerenteId gerente) {
+    public void reprovar(GerenteId gerente) {
         this.status = StatusMovimentacaoFinanceira.recusada;
         this.gerente = gerente;
     }
@@ -38,32 +38,43 @@ public class MovimentacaoFinanceira {
         this.status = StatusMovimentacaoFinanceira.finalizada;
     }
     
-    public MovimentacaoFinanceira(MovimentacaoFinanceiraId id, Money valor, TipoMovimentacaoFinanceira tipo, Conta contaCredito, Conta contaDebito) {
+    
+    //public MovimentacaoFinanceira(MovimentacaoFinanceiraId id, Money valor, TipoMovimentacaoFinanceira tipo, Conta contaCredito, Conta contaDebito) {
+    private MovimentacaoFinanceira(MovimentacaoFinanceiraId id, Money valor, TipoMovimentacaoFinanceira tipo, Conta conta) {
+		this.id = id;	
+		this.contaCredito = (tipo == TipoMovimentacaoFinanceira.deposito ? conta: Conta.empty());
+		this.contaDebito  = (tipo == TipoMovimentacaoFinanceira.saque ? conta: Conta.empty());
+		this.valor = valor;
+		this.tipo = tipo;
+		this.status = StatusMovimentacaoFinanceira.aguardandoAprovacao;   
+	}
+    
+    private MovimentacaoFinanceira(MovimentacaoFinanceiraId id, Money valor, Conta contaCredito, Conta contaDebito) {
 		this.id = id;
         this.contaCredito = contaCredito;
 		this.contaDebito = contaDebito;
 		this.valor = valor;
-		this.tipo = tipo;
+		this.tipo = TipoMovimentacaoFinanceira.transferencia;
 		this.status = StatusMovimentacaoFinanceira.aguardandoAprovacao;   
 	}
 	
     public static MovimentacaoFinanceira saque(MovimentacaoFinanceiraId id, Money valor, Conta conta) {    	    	
     	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(id, valor, 
-    			TipoMovimentacaoFinanceira.saque, Conta.empty(), conta);
+    			TipoMovimentacaoFinanceira.saque, conta);
    	
     	return movimentacaoFinaceira;
     }
     
     public static MovimentacaoFinanceira deposito(MovimentacaoFinanceiraId id, Money valor, Conta conta) {    	
     	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(id,valor, 
-    			TipoMovimentacaoFinanceira.deposito, conta, Conta.empty());
+    			TipoMovimentacaoFinanceira.deposito, conta);
       	
     	return movimentacaoFinaceira;
     }
     
     public static MovimentacaoFinanceira transferencia(MovimentacaoFinanceiraId id, Money valor, Conta contaDebito, Conta contaCredito) {
     	MovimentacaoFinanceira movimentacaoFinaceira = new MovimentacaoFinanceira(id,valor, 
-    			TipoMovimentacaoFinanceira.transferencia, contaCredito, contaDebito);
+    			contaCredito, contaDebito);
     	
     	return movimentacaoFinaceira;
     }
