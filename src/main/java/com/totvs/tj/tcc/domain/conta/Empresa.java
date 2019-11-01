@@ -6,7 +6,7 @@ import br.com.caelum.stella.validation.CNPJValidator;
 import lombok.Builder;
 import lombok.ToString;
 
-@Builder
+@Builder(builderClassName = "Builder",buildMethodName = "build")
 @ToString
 public class Empresa {
     private EmpresaId id;
@@ -14,7 +14,6 @@ public class Empresa {
     private int quantidadeFuncionarios;
     private Money valorDeMercado;
     private ResponsavelId responsavel;
-    
     private ContaId contaId;
     
     public void validarCNPJ(String cnpj) {
@@ -35,6 +34,28 @@ public class Empresa {
                 .valorDeMercado(Money.of(0, "BRL"))
                 .quantidadeFuncionarios(-1)
                 .build();
+    }
+    
+    public static class Builder {
+        private String CPNJ;
+        
+        public Empresa build() {
+            if (CPNJInvalido(this.CPNJ)) {
+                throw new IllegalArgumentException("Invalid CNPJ.");
+            }
+            return new Empresa(id, CPNJ, quantidadeFuncionarios, valorDeMercado, responsavel, contaId);
+        }
+        
+        public boolean CPNJInvalido(String CNPJ) {
+            CNPJValidator cnpjValidator = new CNPJValidator();
+            try{ 
+                cnpjValidator.assertValid(CNPJ); 
+                return false; 
+            }catch(Exception e){ 
+                e.printStackTrace(); 
+                return false; 
+            } 
+        }
     }
        
 }
