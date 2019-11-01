@@ -30,7 +30,7 @@ public class Empresa {
     public static Empresa empty() {
     	return Empresa.builder()
                 .id(null)
-                .CPNJ("")
+                .CPNJ("52.211.237/0001-15")
                 .valorDeMercado(Money.of(0, "BRL"))
                 .quantidadeFuncionarios(-1)
                 .build();
