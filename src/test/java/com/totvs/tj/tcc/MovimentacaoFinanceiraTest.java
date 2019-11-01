@@ -1,5 +1,6 @@
 package com.totvs.tj.tcc;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
@@ -110,7 +111,8 @@ public class MovimentacaoFinanceiraTest {
         assertEquals(idGerente.toString(), movimentacao.getGerente().toString());
         
         movimentacao.finalizar();
-        assertEquals(movimentacao.getStatus(),StatusMovimentacaoFinanceira.finalizada);       
+        assertEquals(movimentacao.getStatus(),StatusMovimentacaoFinanceira.finalizada);
+        
     }    
     
     @Test
@@ -134,6 +136,8 @@ public class MovimentacaoFinanceiraTest {
         List<ExtratoConta> extratoContaCredito = new ArrayList<ExtratoConta>();
         extratoContaCredito.add(ExtratoConta.from(Money.of(106.74, "BRL")));
         assertEquals(extratoContaCredito.get(0).toString(), contaCredito.getExtrato().get(0).toString());
+        
+        assertFalse(contaCredito.debitarSaldo(movimentacao));
     }
     
     @Test

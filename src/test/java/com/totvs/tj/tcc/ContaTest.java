@@ -106,6 +106,7 @@ public class ContaTest {
         conta.suspender();
         assertFalse(conta.isDisponivel());
     }    
+   
     
     static class ContaRepositoryMock implements ContaRepository {
         @Override
