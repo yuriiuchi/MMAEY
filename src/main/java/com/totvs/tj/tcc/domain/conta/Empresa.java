@@ -16,10 +16,10 @@ public class Empresa {
     private ResponsavelId responsavel;
     private ContaId contaId;
     
-    public void validarCNPJ(String cnpj) {
-       CNPJValidator cnpjValidator = new CNPJValidator();
-       cnpjValidator.assertValid(cnpj);
-    }
+//    public void validarCNPJ(String cnpj) {
+//       CNPJValidator cnpjValidator = new CNPJValidator();
+//       cnpjValidator.assertValid(cnpj);
+//    }
     public int getQuantidadeFuncionarios() {
         return quantidadeFuncionarios;
     }
@@ -41,7 +41,7 @@ public class Empresa {
         
         public Empresa build() {
             if (CPNJInvalido(this.CPNJ)) {
-                throw new IllegalArgumentException("Invalid CNPJ.");
+//                throw new IllegalArgumentException("Invalid CNPJ.");
             }
             return new Empresa(id, CPNJ, quantidadeFuncionarios, valorDeMercado, responsavel, contaId);
         }

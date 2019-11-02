@@ -30,7 +30,7 @@ public class ContaTest {
     public Empresa getEmpresa() {
             return this.empresa = Empresa.builder()
                     .id(idEmpresa)
-                    .CPNJ("11111111111")
+                    .CPNJ("48.206.442/0001-15")
                     .valorDeMercado(Money.of(50000.00, "BRL"))
                     .quantidadeFuncionarios(10)
                     .build();

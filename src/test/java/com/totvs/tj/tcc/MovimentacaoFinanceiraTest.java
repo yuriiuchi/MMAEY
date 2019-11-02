@@ -32,14 +32,14 @@ public class MovimentacaoFinanceiraTest {
     private final Empresa empresaCredito = Empresa.builder()
             .id(idEmpresaCredito)
             .responsavel(idResponsavel)
-            .CPNJ("11111111111")
+            .CPNJ("48.206.442/0001-15")
             .valorDeMercado(Money.of(1000000.00, "BRL"))
             .quantidadeFuncionarios(10)
             .build();
     private final Empresa empresaDebito = Empresa.builder()
             .id(idEmpresaDebito)
             .responsavel(idResponsavel)
-            .CPNJ("11111111111")
+            .CPNJ("83.603.369/0001-16")
             .valorDeMercado(Money.of(1000000.00, "BRL"))
             .quantidadeFuncionarios(10)
             .build();      
