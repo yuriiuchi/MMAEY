@@ -16,6 +16,10 @@ public class Empresa {
     private ResponsavelId responsavel;
     private ContaId contaId;
     
+//    public void validarCNPJ(String cnpj) {
+//       CNPJValidator cnpjValidator = new CNPJValidator();
+//       cnpjValidator.assertValid(cnpj);
+//    }
     public int getQuantidadeFuncionarios() {
         return quantidadeFuncionarios;
     }

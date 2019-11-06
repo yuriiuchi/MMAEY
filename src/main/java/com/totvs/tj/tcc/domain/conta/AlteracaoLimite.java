@@ -4,9 +4,18 @@ import java.time.LocalDate;
 
 import org.javamoney.moneta.Money;
 
-public class AlteracaoLimite<List> {
+public class AlteracaoLimite {
     private Money valor;
-    private LocalDate dataOperacao;
+    private LocalDate data;
     
-    private AlteracaoLimite() {}
+    private AlteracaoLimite(Money valor, LocalDate data) {
+        this.valor = valor;
+        this.data = data;
+    }
+
+    public static AlteracaoLimite from (Money valor) {
+        return new AlteracaoLimite(valor, LocalDate.now());
+    }
+    
+    
 }

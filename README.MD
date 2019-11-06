@@ -10,21 +10,9 @@
 
 ![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/public.png)
 
-# Installing globally:
+# Diagrama:
+![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/projeto.png)
+![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/Diagrama.JPG)
 
-Installation via `npm`:
-
-     npm install xxxxx -g
-
-
-
-## Running on-demand:
-
-Using `npx` you can run the script without installing it first:
-
-     npx xxxxx [path] [options]
-
-## Usage:
-
-     xxxxx [path] [options]
-
+# Anotações:
+![](https://github.com/yuriiuchi/MMAEY/raw/master/screenshots/Anotacoes.JPG)

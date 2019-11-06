@@ -1,6 +1,7 @@
 package com.totvs.tj.tcc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -24,33 +25,32 @@ public class ContaTest {
 
     private final ResponsavelId idResponsavel = ResponsavelId.generate();
   
+    private Empresa empresa;
+    
+    public Empresa getEmpresa() {
+            return this.empresa = Empresa.builder()
+                    .id(idEmpresa)
+                    .CPNJ("48.206.442/0001-15")
+                    .valorDeMercado(Money.of(50000.00, "BRL"))
+                    .quantidadeFuncionarios(10)
+                    .build();
+    }
+    
+    public Conta getConta() {
+        return Conta.from(idConta,empresa);
+    }
     
     @Test
     public void aoCriarUmaConta() throws Exception {
-
         // WHEN
-        Empresa empresa = Empresa.builder()
-                .id(idEmpresa)
-                .CPNJ("11111111111")
-                .valorDeMercado(Money.of(50000.00, "BRL"))
-                .quantidadeFuncionarios(10)
-                .build();
-        
-        Conta conta = Conta.from(idConta,empresa);
-        
+        Empresa empresa = this.getEmpresa();
+        Conta conta = getConta();
         // THEN
         assertNotNull(conta);
-
         assertEquals(idConta, conta.getId());
-        assertEquals(empresa, conta.getEmpresa());
-
-        assertEquals(idConta.toString(), conta.getId().toString());
-        assertEquals(empresa.toString(), conta.getEmpresa().toString());
-        
-        assertTrue(conta.isDisponivel());
-        
+        assertEquals(idConta.toString(), conta.getId().toString());        
+        assertTrue(conta.isDisponivel());        
         assertTrue(conta.getLimite().isLessThanOrEqualTo(Money.of(15000, "BRL")));
-        
         assertTrue(conta.getSaldo().isEqualTo(Money.of(0, "BRL")));
     }
 
@@ -61,12 +61,7 @@ public class ContaTest {
         ContaRepository repository = new ContaRepositoryMock();
         ContaApplicationService service = new ContaApplicationService(repository);
         
-        Empresa empresa = Empresa.builder()
-                .id(idEmpresa)
-                .CPNJ("11111111111")
-                .valorDeMercado(Money.of(50000.00, "BRL"))
-                .quantidadeFuncionarios(10)
-                .build();
+        Empresa empresa = this.getEmpresa();
         
         AbrirContaCommand cmd = AbrirContaCommand.builder()
                 .empresa(empresa)
@@ -86,21 +81,32 @@ public class ContaTest {
         ContaRepository repository = new ContaRepositoryMock();
         ContaApplicationService service = new ContaApplicationService(repository);
         
-        Empresa empresa = Empresa.builder()
-                .id(idEmpresa)
-                .CPNJ("11111111111")
-                .valorDeMercado(Money.of(50000.00, "BRL"))
-                .quantidadeFuncionarios(10)
-                .build();
+        Empresa empresa = this.getEmpresa();
         
-        Conta conta = Conta.from(idConta,empresa);
+        Conta conta = getConta();
         
         // WHEN
-        conta.aumentarLimte(Money.of(100.00, "BRL"));
+        conta.aumentarLimte();
         
         // THEN
-        assertTrue(conta.getLimite().isEqualTo(Money.of(150, "BRL")));
+        assertEquals(conta.getLimite(),(Money.of(75, "BRL")));
+        conta.aumentarLimte();
+        assertEquals(conta.getLimite(),(Money.of(75, "BRL")));
     }
+    
+    @Test
+    public void aoSuspenderConta() throws Exception {
+        
+        // WHEN
+        Empresa empresa = this.getEmpresa();
+        Conta conta = getConta();
+        
+        // THEN
+        assertNotNull(conta);
+        conta.suspender();
+        assertFalse(conta.isDisponivel());
+    }    
+   
     
     static class ContaRepositoryMock implements ContaRepository {
         @Override
