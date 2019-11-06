@@ -41,7 +41,7 @@ public class Empresa {
         
         public Empresa build() {
             if (CPNJInvalido(this.CPNJ)) {
-//                throw new IllegalArgumentException("Invalid CNPJ.");
+                throw new IllegalArgumentException("Invalid CNPJ.");
             }
             return new Empresa(id, CPNJ, quantidadeFuncionarios, valorDeMercado, responsavel, contaId);
         }
@@ -52,8 +52,7 @@ public class Empresa {
                 cnpjValidator.assertValid(CNPJ); 
                 return false; 
             }catch(Exception e){ 
-                e.printStackTrace(); 
-                return false; 
+                return true; 
             } 
         }
     }
